@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta encoding="utf-8">
+	<title>Admin</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="static/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+	<link href="static/css/font-awesome.min.css" rel="stylesheet">
+	<link href="static/css/style.css" rel="stylesheet" media="screen">
+</head>
+<body>
+	
+	<div class="container-fluid">
+		
+	<nav class="navbar">
+	  <div class="navbar-inner">
+	    <span class="brand" href="#">Na'ama CMS Admin</span>
+	    <ul class="nav" data-bind="foreach: $__page__.children">
+			<li data-bind="css: {active: isVisible}"><a data-bind="text: $data.val('title'), page-href: $data"></a></li>
+	    </ul>
+		<button class="btn pull-right" id="publish"><i class="icon-globe"></i> Publish</button>
+	  </div>
+	</nav>
+	
+	<div class="tab-content" id="content">
+	    <div data-bind="page: {id: 'pages', title: 'Pages', with: pages}" class="tab-pane active">
+			<div data-bind="page: {id: '?', nameParam: 'path'}">
+				
+			</div>
+		</div>
+   	    <div data-bind="page: {id: 'images', title: 'Images'}" class="tab-pane">
+   			immmagös!
+		</div>
+   	    <div data-bind="page: {id: 'downloads', title: 'Downloads'}" class="tab-pane">
+   			donlods!
+		</div>
+   	    <div data-bind="page: {id: 'dates', title: 'Dates', with: dates, beforeShow: dates.refresh}" id="dates" class="tab-pane">
+
+			<div data-bind="page: {id: 'start', title: 'List of Dates'}">
+
+				<a class="add btn btn-small" data-bind="page-href: '../add'"><i class="icon-plus"></i> Add</a>
+				<table class="table table-striped table-bordered table-condensed table-hover" >
+					<thead>
+						<tr><th>Date</th><th>Description</th><th> </th></tr>
+					</thead>
+					<tbody data-bind="visible: 1 > list().length">
+						<tr><td colspan="3" class="empty">No Dates yet, you can add some by clicking "Add".</td></tr>
+					</tbody>
+					<tbody data-bind="foreach: list, visible: list().length > 0">
+					<tr><td data-bind="text: date"></td><td data-bind="text: description"></td><td>
+						<a href="#" data-bind="page-href: '../' + $index()" class="btn btn-mini">Edit</a>
+						<a href="#" data-bind="click: $parent.remove" class="btn btn-mini btn-danger">Delete</a>
+					</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div data-bind="page: {id: 'add', title: 'Add Date', beforeShow: beforeAdd}">
+				<h3>Add Date</h3>
+				<form data-bind="submit: add" class="form-horizontal">
+					<div data-bind="template: { name: 'dateForm' }"></div>
+				</form>
+			</div>
+			<div data-bind="page: {id: '?', nameParam: 'id', title: 'Edit Date', beforeShow: beforeEdit}">
+				<h3>Edit Date</h3>
+				<form data-bind="submit: edit" class="form-horizontal">
+					<input type="hidden" name="id" data-bind="value: id">
+					<div data-bind="template: { name: 'dateForm' }"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+	</div>
+	
+	
+	<script id="dateForm" type="text/html">
+		<div class="control-group">
+			<label class="control-label" for="datum">Date</label>
+			<div class="controls"><input type="text" data-bind="value: form.date"></div>
+			</div>
+		<div class="control-group">
+			<label class="control-label" for="datum">Description</label>
+			<div class="controls"><input type="text" data-bind="value: form.description"></div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="save btn btn-success"><i class="icon-save"></i> Save</button>
+				<button type="button" class="btn cancel" data-bind="click: cancel">Cancel</button>
+			</div>
+		</div>
+	</script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+	<script xsrc="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
+	<script src="//knockoutjs.com/downloads/knockout-2.2.1.debug.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
+	<script src="static/js/lib/pager.js"></script>
+	<script src="static/js/admin.js"></script>	
+</body>
+</html>
