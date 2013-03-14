@@ -24,11 +24,30 @@
 	</nav>
 	
 	<div class="tab-content" id="content">
-	    <div data-bind="page: {id: 'pages', title: 'Pages', with: pages}" class="tab-pane active">
-			<div data-bind="page: {id: '?', nameParam: 'path'}">
-				
+	    <div data-bind="page: {id: 'pages', title: 'Pages', with: pages, beforeShow: pages.refresh}" class="tab-pane active">
+			<div data-bind="page: {id: 'start', params: {'dir': '/'}, beforeShow: refresh}">
+				<h3 data-bind="text: dir"></h3>
+				<a class="add btn btn-small" data-bind="page-href: '../add'"><i class="icon-plus"></i> Add</a>
+				<table class="table table-bordered table-condensed table-hover" >
+					<thead>
+						<tr><th>Name</th></tr>
+					</thead>
+					<tbody data-bind="visible: 1 > list().length">
+						<tr><td colspan="2" class="empty">No Pages yet, you can add some by clicking "Add".</td></tr>
+					</tbody>
+					<tbody data-bind="foreach: list, visible: list().length > 0">
+						<tr><td><a data-bind="text: name, page-href: {path: '../', params: {dir:  '/' + name}}">
+							<a href="#" data-bind="click: $parent.remove" class="btn btn-mini btn-danger pull-right">Delete</a>
+						</td></tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
+		
+		
+		
+		
+		
    	    <div data-bind="page: {id: 'images', title: 'Images'}" class="tab-pane">
    			immmagös!
 		</div>
@@ -91,8 +110,7 @@
 	</script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-	<script xsrc="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
-	<script src="//knockoutjs.com/downloads/knockout-2.2.1.debug.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
 	<script src="static/js/lib/pager.js"></script>
 	<script src="static/js/admin.js"></script>	

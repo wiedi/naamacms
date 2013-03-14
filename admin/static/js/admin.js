@@ -18,9 +18,20 @@ function resolvePath(href, current) {
 
 function fileViewModel(o) {
 	var self = this
+	
 	this.apiRoot = o.apiRoot
-	this.path = ko.observable('/')
+	
+	this.dir = ko.observable('/')
 	this.list = ko.observableArray([])
+	this.loading = ko.observable(true)
+		
+	this.refresh = function() {
+		self.loading(true)
+		$.getJSON(self.apiRoot + self.dir(), function(data) {
+			self.list(data)
+			self.loading(false)
+		})		
+	}
 	
 }
 
@@ -47,6 +58,7 @@ function crudViewModel(o) {
 		})
 	}
 	this.save = function() {
+		console.log("wtf")
 		$.post(self.apiRoot, ko.toJSON(this.list), function() {})
 	}
 	this.add = function(form) {
@@ -86,7 +98,7 @@ function crudViewModel(o) {
 
 var viewModel = {
 	pages: new fileViewModel({
-		apiRoot: '/api/pages/',
+		apiRoot: '/api/pages',
 		
 	}),
 	dates: new crudViewModel({
@@ -98,6 +110,8 @@ var viewModel = {
 	}),
 }
 
-pager.extendWithPage(viewModel);
-ko.applyBindings(viewModel);
-pager.start();
+//pager.useHTML5history = true
+//pager.Href5.history = History
+pager.extendWithPage(viewModel)
+ko.applyBindings(viewModel)
+pager.start()

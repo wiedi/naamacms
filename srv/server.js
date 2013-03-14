@@ -3,10 +3,11 @@
 var fs = require('fs-extra')
 var path = require('path')
 var express = require('express')
+var async = require('async')
 
 var config = {
 	'host': 'localhost',
-	'port': 3000,
+	'port': 3001,
 	'file_path': './files/',
 	'debug': true,
 }
@@ -29,7 +30,32 @@ function get(req, res, f) {
 					res.status(500).json({status: 'error', msg: 'readdir fail'})
 					return
 				}
-				res.json(files)
+				async.map(files, function(file, cb) {
+					fs.stat(f + '/' + file, function(err, stat) {
+						if(err) {
+							console.log(err)
+							cb(err)
+							return
+						}
+						var type
+						if(stat.isFile()) {
+							type = 'f'
+						} else if(stat.isDirectory()) {
+							type = 'd'
+						} else {
+							cb('invalid')
+							return
+						}
+						cb(err, {name: file,type: type})
+					})
+				}, function (err, results) {
+					if(err) {
+						res.status(500).json({status: 'error', msg: 'dirlist failed'})
+						return
+					}
+					res.json(results)
+				});
+				
 			})
 		} else {
 			res.status(500).json({status: 'error', msg: 'not a file or directory'})
@@ -65,7 +91,7 @@ app.use('/api', function(req, res) {
 		case 'POST': put(req, res, f); break
 		case 'DELETE': rm(req, res, f); break
 	}
-	console.log(req.method)
+	console.log(req.method, req.url)
 })
 
 app.use(express.static(__dirname + '/../admin'));
