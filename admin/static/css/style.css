@@ -4,7 +4,7 @@ body {
 	-background-image: -webkit-linear-gradient(top, #eee, #fff);
 }
 
-.btn + table {
+.btn + table, .btn-group + table {
 	margin-top: 1em;
 }
 
@@ -25,4 +25,17 @@ body {
 
 td.empty {
 	padding: 1em;
+}
+
+#editor {
+	-display: none;
+}
+
+#epiceditor {
+	border: 1px solid #333;
+	border-radius: 3px;
+	box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px;
+	margin-bottom: 1em;
+	overflow: hidden;
+	min-height: 26em;
 }

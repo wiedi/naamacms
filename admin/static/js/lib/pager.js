@@ -608,6 +608,7 @@
                 // update params if they are updated
                 if (pageRoute && params !== pageRoute.params) {
                     m.setParams();
+					m.show()
                 }
             }
             m.childManager.showChild(route);

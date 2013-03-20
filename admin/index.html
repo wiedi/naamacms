@@ -24,23 +24,58 @@
 	</nav>
 	
 	<div class="tab-content" id="content">
-	    <div data-bind="page: {id: 'pages', title: 'Pages', with: pages, beforeShow: pages.refresh}" class="tab-pane active">
-			<div data-bind="page: {id: 'start', params: {'dir': '/'}, beforeShow: refresh}">
+	    <div data-bind="page: {id: 'pages', title: 'Pages', role: 'start', with: pages}" class="tab-pane active">
+			<div data-bind="page: {id: 'list', role: 'start', params: {'dir': '/'}, beforeShow: refresh}">
 				<h3 data-bind="text: dir"></h3>
-				<a class="add btn btn-small" data-bind="page-href: '../add'"><i class="icon-plus"></i> Add</a>
+				
+				<div class="btn-group">
+					<button class="btn" data-bind="click: newPage"><i class="icon-plus"></i> New Page</button>
+					<button class="btn dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a data-bind="click: newPage">New Page...</a></li>
+						<li><a data-bind="click: newFolder">New Folder...</a></li>
+					</ul>
+				</div>
+				
 				<table class="table table-bordered table-condensed table-hover" >
 					<thead>
 						<tr><th>Name</th></tr>
 					</thead>
-					<tbody data-bind="visible: 1 > list().length">
-						<tr><td colspan="2" class="empty">No Pages yet, you can add some by clicking "Add".</td></tr>
-					</tbody>
-					<tbody data-bind="foreach: list, visible: list().length > 0">
-						<tr><td><a data-bind="text: name, page-href: {path: '../', params: {dir:  '/' + name}}">
+					<tbody>
+						<tr data-bind="visible: dir() != '/'"><td><i class="icon-arrow-up"></i> <a data-bind="page-href: {path: '../list', params: {dir: parentDir(dir())}}">..</td></tr>
+						<!-- ko foreach: list -->
+						<tr><td>
+							<!-- ko if: 'd' == type -->
+								<i class="icon-folder-close-alt"></i>
+								<a data-bind="text: name, page-href: {path: '../list', params: {dir: $parent.dir() + '/' + name}}"></a>
+							<!-- /ko -->
+							<!-- ko if: 'f' == type -->
+								<i class="icon-file-alt">&nbsp;</i>
+								<a data-bind="text: name, page-href: {path: '../edit', params: {dir: $parent.dir() + '/' + name}}"></a>
+							<!-- /ko -->
 							<a href="#" data-bind="click: $parent.remove" class="btn btn-mini btn-danger pull-right">Delete</a>
+								
 						</td></tr>
+						<!-- /ko -->
 					</tbody>
 				</table>
+			</div>
+			
+			<div data-bind="page: {id: 'edit', params: {'dir': '/index.md'}, beforeShow: load, afterShow: showEditor, beforeHide: hideEditor}">
+				<h3 data-bind="text: dir"></h3>
+				<form data-bind="submit: save">
+					
+					<div id="epiceditor"></div>
+					
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" class="save btn btn-success"><i class="icon-save"></i> Save</button>
+							<button type="button" class="btn cancel" data-bind="click: cancel">Cancel</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 		
@@ -51,6 +86,9 @@
    	    <div data-bind="page: {id: 'images', title: 'Images'}" class="tab-pane">
    			immmagös!
 		</div>
+		
+		
+		
    	    <div data-bind="page: {id: 'downloads', title: 'Downloads'}" class="tab-pane">
    			donlods!
 		</div>
@@ -113,6 +151,9 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
 	<script src="static/js/lib/pager.js"></script>
+	<script src="static/js/lib/bootbox.min.js"></script>
+	<script src="static/js/lib/EpicEditor/epiceditor/js/epiceditor.js"></script>
+	<script src="static/js/path.js"></script>	
 	<script src="static/js/admin.js"></script>	
 </body>
 </html>
