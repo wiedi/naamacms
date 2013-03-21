@@ -4,6 +4,7 @@ var fs = require('fs-extra')
 var path = require('path')
 var express = require('express')
 var async = require('async')
+var blacksmith = require('blacksmith/lib/blacksmith')
 
 var config = {
 	'host': '::',
@@ -104,6 +105,19 @@ app.use('/api', function(req, res) {
 		case 'DELETE': rm(req, res, f); break
 	}
 	console.log(req.method, req.url)
+})
+
+app.use('/publish', function(req, res) {
+	blacksmith({
+		dir: config.file_path
+	}, function(err) {
+		if(err) {
+			console.dir(err)
+			res.status(500).json({status: 'error', msg: err.message})
+			return
+		}
+		res.json({status: 'succcess'})
+	})
 })
 
 app.use(express.static(__dirname + '/../admin'));
