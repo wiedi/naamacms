@@ -7,13 +7,16 @@ var async = require('async')
 var blacksmith = require('blacksmith/lib/blacksmith')
 
 var config = {
-	'host': '::',
-	'port': 3001,
-	'file_path': './files/',
-	'debug': true,
+	'admin_host':  '::',
+	'admin_port':  3001,
+	'public_host': '::',
+	'public_port': 3002,
+	'file_path':   './files/',
+	'debug':       true,
 }
 
 var app = express()
+var pub = express()
 app.enable('trust proxy')
 
 function getFile(req, res, f) {
@@ -91,8 +94,8 @@ function rm(req, res, f) {
 	
 }
 
-app.use('/api', function(req, res) {	
-	var f = config.file_path + path.normalize(decodeURI(req.url))
+function restfs(req, res, file_path) {
+	var f = file_path + path.normalize(decodeURI(req.url))
 	
 	if(!req.secure && !config.debug) {
 		res.status(500).json({status: 'error', msg: 'https required'})
@@ -105,9 +108,18 @@ app.use('/api', function(req, res) {
 		case 'DELETE': rm(req, res, f); break
 	}
 	console.log(req.method, req.url)
+}
+
+app.use('/api/pages', function(req, res) {
+	restfs(req, res, config.file_path + '/content/pages/')
 })
 
-app.use('/publish', function(req, res) {
+app.use('/api/metadata', function(req, res) {
+	restfs(req, res, config.file_path + '/metadata/')
+})
+
+
+app.use('/api/publish', function(req, res) {
 	blacksmith({
 		dir: config.file_path
 	}, function(err) {
@@ -120,8 +132,10 @@ app.use('/publish', function(req, res) {
 	})
 })
 
-app.use(express.static(__dirname + '/../admin'));
+app.use(express.static(__dirname + '/../admin'))
+pub.use(express.static(config.file_path + '/public/'))
 
-
-app.listen(config.port);
-console.log('Listening on http://' + config.host + ':' + config.port);
+app.listen(config.admin_port,  config.admin_host)
+pub.listen(config.public_port, config.public_host)
+console.log('Admin Listening on http://' + config.admin_host  + ':' + config.admin_port)
+console.log('Public Site on http://' +     config.public_host + ':' + config.public_port)

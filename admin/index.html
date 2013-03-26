@@ -7,6 +7,7 @@
 	<link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<link href="static/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
 	<link href="static/css/font-awesome.min.css" rel="stylesheet">
+	<link href="static/css/jquery.fileupload-ui.css" rel="stylesheet">
 	<link href="static/css/style.css" rel="stylesheet" media="screen">
 </head>
 <body>
@@ -25,7 +26,7 @@
 	
 	<div class="tab-content" id="content">
 	    <div data-bind="page: {id: 'pages', title: 'Pages', role: 'start', with: pages}" class="tab-pane active">
-			<div data-bind="page: {id: 'list', role: 'start', params: {'dir': '/'}, beforeShow: refresh}">
+			<div data-bind="page: {id: 'list', role: 'start', params: {'dir': '/'}, beforeShow: refresh, afterShow: showList, beforeHide: hideList}">
 				<h3 data-bind="text: dir"></h3>
 				
 				<div class="btn-group">
@@ -36,6 +37,7 @@
 					<ul class="dropdown-menu">
 						<li><a data-bind="click: newPage">New Page...</a></li>
 						<li><a data-bind="click: newFolder">New Folder...</a></li>
+						<li><a data-bind="click: uploadFile">Upload File...</a></li>
 					</ul>
 				</div>
 				
@@ -61,11 +63,76 @@
 						<!-- /ko -->
 					</tbody>
 				</table>
+				
+				
+
+				
+				
+				<!-- UPLOAD Modal -->
+				<div id="uploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 id="uploadModalLabel">Upload File</h3>
+					</div>
+					<div class="modal-body">
+						<form id="fileupload" method="POST" enctype="text/plain">
+			                <span class="btn btn-success fileinput-button">
+			                    <i class="icon-plus icon-white"></i>
+			                    <span>Add files...</span>
+			                    <input type="file" name="files[]" multiple>
+			                </span>
+			                <button type="submit" class="btn btn-primary start">
+			                    <i class="icon-upload icon-white"></i>
+			                    <span>Start upload</span>
+			                </button>
+				            <div class="span5 fileupload-progress fade">
+				                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+				                    <div class="bar" style="width:0%;"></div>
+				                </div>
+				                <div class="progress-extended">&nbsp;</div>
+				            </div>
+				        </div>
+				        <div class="fileupload-loading"></div>
+				        <br>
+				        <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+
+						</form>
+						
+						
+						
+						<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						<button class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
 			</div>
 			
 			<div data-bind="page: {id: 'edit', params: {'dir': '/index.md'}, beforeShow: load, afterShow: showEditor, beforeHide: hideEditor}">
 				<h3 data-bind="text: dir"></h3>
 				<form data-bind="submit: save">
+					
+					<div class="btn-toolbar">
+						<div class="btn-group">
+						  <button class="btn" title="heading 1" data-bind="click: h1">h1</button>
+						  <button class="btn" title="heading 2" data-bind="click: h2">h2</button>
+						  <button class="btn" title="heading 3" data-bind="click: h3">h3</button>
+						</div>
+						
+						<div class="btn-group">
+						  <button class="btn" title="link"  data-bind="click: link" ><i class="icon-link"></i></button>
+						  <button class="btn" title="image" data-bind="click: image"><i class="icon-picture"></i></button>
+						</div>
+						
+						<div class="btn-group">
+						  <button class="btn" title="bold"   data-bind="click: bold"  ><i class="icon-bold"  ></i></button>
+						  <button class="btn" title="italic" data-bind="click: italic"><i class="icon-italic"></i></button>
+						</div>
+						
+						<div class="btn-group">
+						  <button class="btn" data-bind="click: ul" title="unordered list"><i class="icon-list-ul"></i></button>
+						  <button class="btn" data-bind="click: ol" title="ordered list"><i class="icon-list-ol"></i></button>
+						</div>
+					</div>
 					
 					<div id="epiceditor"></div>
 					
@@ -81,17 +148,6 @@
 		
 		
 		
-		
-		
-   	    <div data-bind="page: {id: 'images', title: 'Images'}" class="tab-pane">
-   			immmagös!
-		</div>
-		
-		
-		
-   	    <div data-bind="page: {id: 'downloads', title: 'Downloads'}" class="tab-pane">
-   			donlods!
-		</div>
    	    <div data-bind="page: {id: 'dates', title: 'Dates', with: dates, beforeShow: dates.refresh}" id="dates" class="tab-pane">
 
 			<div data-bind="page: {id: 'start', title: 'List of Dates'}">
@@ -146,14 +202,80 @@
 			</div>
 		</div>
 	</script>
+	
+	<!-- The template to display files available for upload -->
+	<script id="template-upload" type="text/x-tmpl">
+	{% for (var i=0, file; file=o.files[i]; i++) { %}
+	    <tr class="template-upload fade">
+	        <td class="preview"><span class="fade"></span></td>
+	        <td class="name"><span>{%=file.name%}</span></td>
+	        <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+	        {% if (file.error) { %}
+	            <td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+	        {% } else if (o.files.valid && !i) { %}
+	            <td>
+	                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
+	            </td>
+	            <td>{% if (!o.options.autoUpload) { %}
+	                <button class="btn btn-primary start">
+	                    <i class="icon-upload icon-white"></i>
+	                    <span>Start</span>
+	                </button>
+	            {% } %}</td>
+	        {% } else { %}
+	            <td colspan="2"></td>
+	        {% } %}
+	        <td>{% if (!i) { %}
+	            <button class="btn btn-warning cancel">
+	                <i class="icon-ban-circle icon-white"></i>
+	                <span>Cancel</span>
+	            </button>
+	        {% } %}</td>
+	    </tr>
+	{% } %}
+	</script>
+	<!-- The template to display files available for download -->
+	<script id="template-download" type="text/x-tmpl">
+	{% for (var i=0, file; file=o.files[i]; i++) { %}
+	    <tr class="template-download fade">
+	        {% if (file.error) { %}
+	            <td></td>
+	            <td class="name"><span>{%=file.name%}</span></td>
+	            <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+	            <td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+	        {% } else { %}
+	            <td class="preview">{% if (file.thumbnail_url) { %}
+	                <a href="{%=file.url%}" title="{%=file.name%}" data-gallery="gallery" download="{%=file.name%}"><img src="{%=file.thumbnail_url%}"></a>
+	            {% } %}</td>
+	            <td class="name">
+	                <a href="{%=file.url%}" title="{%=file.name%}" data-gallery="{%=file.thumbnail_url&&'gallery'%}" download="{%=file.name%}">{%=file.name%}</a>
+	            </td>
+	            <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+	            <td colspan="2"></td>
+	        {% } %}
+	        <td>
+	            <button class="btn btn-danger delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+	                <i class="icon-trash icon-white"></i>
+	                <span>Delete</span>
+	            </button>
+	            <input type="checkbox" name="delete" value="1" class="toggle">
+	        </td>
+	    </tr>
+	{% } %}
+	</script>
+	
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
 	<script src="static/js/lib/pager.js"></script>
 	<script src="static/js/lib/bootbox.min.js"></script>
+	<script src="static/js/lib/jquery.ui.widget.js"></script>
+	<script src="static/js/lib/jquery.iframe-transport.js"></script>
+	<script src="static/js/lib/jquery.fileupload.js"></script>
+	<script src="static/js/lib/jquery.fileupload-ui.js"></script>
 	<script src="static/js/lib/EpicEditor/epiceditor/js/epiceditor.js"></script>
-	<script src="static/js/path.js"></script>	
-	<script src="static/js/admin.js"></script>	
+	<script src="static/js/path.js"></script>
+	<script src="static/js/admin.js"></script>
 </body>
 </html>

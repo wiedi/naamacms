@@ -15,7 +15,7 @@ function resolvePath(href, current) {
 	return path.join('/')
 }
 
-
+var x;
 function fileViewModel(o) {
 	var self = this
 	
@@ -28,7 +28,20 @@ function fileViewModel(o) {
 	this.editor = new EpicEditor({
 		basePath: '/static/js/lib/EpicEditor/epiceditor',
 	})
-				
+	this.showList = function() {
+		console.log(x = $('#fileupload').fileupload({
+			url: self.apiRoot + self.dir() + '/bla.data',
+			add: function(e, data) {
+				 console.log('ADDDDD', e, data)
+				 window.fileuploadRequest = data.submit();
+			 },
+			fail: function(e) { console.log('FAIL', e)},
+			done: function(e, data) { console.log('DONE', e, data)}
+		})[0])
+	}
+	this.hideList = function() {
+		
+	}
 	this.refresh = function() {
 		self.dir(normalizePath('/' + self.dir()))
 		self.loading(true)
@@ -39,6 +52,7 @@ function fileViewModel(o) {
 	}
 	this.showEditor = function() {
 		self.editor.load()
+		$('button').tooltip({delay: { show: 700, hide: 100}, container: 'body' })
 		$.get(self.apiRoot + self.dir(), function(data) {
 			self.editor.importFile(self.dir, data)
 			self.loading(false)
@@ -98,6 +112,37 @@ function fileViewModel(o) {
 			})
 
 		})
+	}
+	this.uploadFile = function() {
+		$('#uploadModal').modal('show')
+	}
+	this.surroundWith = function(prefix, postfix) {
+		var selection = self.editor.editorIframeDocument.getSelection()
+		var document  = self.editor.editorIframeDocument
+		if (selection.rangeCount === 0) return
+
+		// prefix
+		var range = selection.getRangeAt(0)
+		range.insertNode(document.createTextNode(prefix))
+		range.collapse(false)
+	
+		// postfix
+		selection.removeAllRanges()
+		selection.addRange(range)
+		range.insertNode(document.createTextNode(postfix))
+	}
+	this.h1 = function() { self.surroundWith('# ', '') }
+	this.h2 = function() { self.surroundWith('## ', '') }
+	this.h3 = function() { self.surroundWith('### ', '') }
+	this.ul = function() { self.surroundWith('* ', '') }
+	this.ol = function() { self.surroundWith('1. ', '') }
+	this.bold   = function() { self.surroundWith('**', '**') }
+	this.italic = function() { self.surroundWith('_', '_') }
+	this.link = function() {
+		 
+	 }
+	this.image = function() {
+		
 	}
 }
 
@@ -164,11 +209,11 @@ function crudViewModel(o) {
 
 var viewModel = {
 	pages: new fileViewModel({
-		apiRoot: '/api/pages',
+		apiRoot: '/api/pages/',
 		
 	}),
 	dates: new crudViewModel({
-		apiRoot: '/api/json/dates.json',
+		apiRoot: '/api/metadata/dates.json',
 		fields: {
 			date: '',
 			description: ''
