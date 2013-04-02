@@ -84,7 +84,7 @@ function fileViewModel(o) {
 		var dir = normalizePath(self.dir() + '/' + this.name)
 		bootbox.confirm("Are you sure you want to delete '" + dir + "'?", function(result) {
 			if(result) {
-				$.ajax({type: 'DELETE', url: self.apiRoot + dir}).done(function(){
+				$.ajax({type: 'DELETE', url: self.apiRoot + dir}).done(function() {
 					self.refresh()	
 				})
 			}
@@ -140,7 +140,7 @@ function fileViewModel(o) {
 	this.italic = function() { self.surroundWith('_', '_') }
 	this.link = function() {
 		 
-	 }
+	}
 	this.image = function() {
 		
 	}
