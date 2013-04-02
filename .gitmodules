@@ -1,0 +1,3 @@
+[submodule "admin/static/js/lib/EpicEditor"]
+	path = admin/static/js/lib/EpicEditor
+	url = git://github.com/OscarGodson/EpicEditor.git
