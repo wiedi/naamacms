@@ -20,7 +20,7 @@
 	    <ul class="nav" data-bind="foreach: $__page__.children">
 			<li data-bind="css: {active: isVisible}"><a data-bind="text: $data.val('title'), page-href: $data"></a></li>
 	    </ul>
-		<button class="btn pull-right" id="publish"><i class="icon-globe"></i> Publish</button>
+		<button class="btn pull-right" id="publish" data-bind="click: publish"><i class="icon-globe"></i> Publish</button>
 	  </div>
 	</nav>
 	

@@ -219,6 +219,15 @@ var viewModel = {
 			description: ''
 		}
 	}),
+	publish: function() {
+		$.ajax({url: '/api/publish/'}).done(function(data){
+			if(data.status == 'success') {
+				bootbox.alert("Published")
+			} else {
+				bootbox.alert("Error")
+			}
+		})
+	}
 }
 
 //pager.useHTML5history = true
