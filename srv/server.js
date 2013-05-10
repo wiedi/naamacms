@@ -30,6 +30,7 @@ function getDirectory(req, res, f) {
 			res.status(500).json({status: 'error', msg: 'readdir fail'})
 			return
 		}
+		files = files.filter(function(fn) { return fn[0] != '.'})
 		async.map(files, function(file, cb) {
 			fs.stat(f + '/' + file, function(err, stat) {
 				if(err) {
