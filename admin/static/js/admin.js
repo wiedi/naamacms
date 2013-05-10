@@ -32,11 +32,21 @@ function fileViewModel(o) {
 		console.log(x = $('#fileupload').fileupload({
 			url: self.apiRoot + self.dir() + '/bla.data',
 			add: function(e, data) {
-				 console.log('ADDDDD', e, data)
-				 window.fileuploadRequest = data.submit();
+				$('#uploadProgressContainer').show();
+				$('#fileupload').fileupload('option', 'url', self.apiRoot + self.dir() + data.files[0].name);
+				window.fileuploadRequest = data.submit();
 			 },
 			fail: function(e) { console.log('FAIL', e)},
-			done: function(e, data) { console.log('DONE', e, data)}
+			done: function(e, data) { console.log('DONE', e, data)},
+			progressall: function (e, data) { 
+				var progress = parseInt(data.loaded / data.total * 100, 10); 
+				$('#uploadProgress').css('width', progress + '%');
+				
+				if(progress === 100) {
+					$('#uploadModal').modal('hide');
+					self.refresh();
+				} 
+			}
 		})[0])
 	}
 	this.hideList = function() {
