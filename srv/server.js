@@ -18,6 +18,8 @@ var config = {
 var app = express()
 var pub = express()
 app.enable('trust proxy')
+app.use(express.bodyParser({ keepExtensions: true }))
+
 
 function getFile(req, res, f) {
 	res.set('Content-Type', 'text/plain')
@@ -71,8 +73,16 @@ function get(req, res, f) {
 }
 
 function post(req, res, f) {
-	req.on('end', function() {res.json({status: 'success'})})
-	req.pipe(fs.createWriteStream(f))
+	if(req.files) {
+		fs.readFile(req.files.files[0].path, function (err, data) {
+			fs.writeFile(f, data, function (err) {
+				res.json({status: (err ? 'error' : 'success')})
+			})
+		})
+	} else {
+		req.on('end', function() {res.json({status: 'success'})})
+		req.pipe(fs.createWriteStream(f))
+	}
 }
 
 function put(req, res, f) {
