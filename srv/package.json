@@ -1,12 +1,12 @@
 {
-  "name": "naamacms-srv",
-  "description": "rest server for naamacms",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "express": "3.x",
-	"fs-extra": "0.5.x",
-	"async": "0.2.x",
-	"blacksmith": "1.1.x"
-  }
+	"name": "naamacms-srv",
+	"description": "rest server for naamacms",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"express": "3.x",
+		"fs-extra": "0.5.x",
+		"async": "0.2.x",
+		"blacksmith": "1.1.x"
+	}
 }
