@@ -136,7 +136,7 @@ app.use('/api/publish', function(req, res) {
 	}, function(err) {
 		if(err) {
 			console.dir(err)
-			res.json({status: 'error', msg: err.message})
+			res.status(500).json({status: 'error', msg: err.message})
 			return
 		}
 		res.json({status: 'success'})
