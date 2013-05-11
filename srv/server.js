@@ -73,7 +73,7 @@ function get(req, res, f) {
 }
 
 function post(req, res, f) {
-	if(req.files) {
+	if(Object.keys(req.files).length) {
 		fs.readFile(req.files.files[0].path, function (err, data) {
 			fs.writeFile(f, data, function (err) {
 				res.json({status: (err ? 'error' : 'success')})

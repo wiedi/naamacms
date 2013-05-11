@@ -79,7 +79,13 @@ function fileViewModel(o) {
 		self.loading(true)
 	}
 	this.save = function() {
-		$.post(self.apiRoot + self.dir(), self.editor.exportFile(), function() {})
+		$.ajax({
+			url: self.apiRoot + self.dir(),
+			type: "POST",
+			data: self.editor.exportFile(),
+			contentType: "text/plain",
+			success: function(){}
+		})
 		self.up()
 	}
 	this.up = function() {
