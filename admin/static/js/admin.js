@@ -234,7 +234,7 @@ var viewModel = {
 			if(data.status == 'success') {
 				bootbox.alert("Published")
 			} else {
-				bootbox.alert("Error")
+				bootbox.alert("Error: " + data.msg)
 			}
 		})
 	}
