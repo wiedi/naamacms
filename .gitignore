@@ -27,3 +27,8 @@ results
 npm-debug.log
 node_modules
 
+srv/files/.blacksmith
+srv/files/**/*.md
+srv/files/**/*.js
+srv/files/**/*.html
+srv/files/**/*.json

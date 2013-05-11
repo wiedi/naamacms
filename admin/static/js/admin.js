@@ -230,12 +230,16 @@ var viewModel = {
 		}
 	}),
 	publish: function() {
-		$.ajax({url: '/api/publish/'}).done(function(data){
-			if(data.status == 'success') {
+		$.ajax({
+			url: '/api/publish/',
+			dataType: 'json',
+			success: function(data){
 				bootbox.alert("Published")
-			} else {
-				bootbox.alert("Error")
-			}
+			},
+			error: function(data) {
+				console.log(data)
+				bootbox.alert("Error " + data.status + ": " + data.responseText)
+			},
 		})
 	}
 }
