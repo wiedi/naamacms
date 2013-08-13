@@ -11,6 +11,18 @@ simple cms based on blacksmith
 	git submodule update
 	cd srv
 	npm install
+
+## Running the server
+
+	cd srv
 	node server
-	cd files
-	cp dot-blacksmith.example .blacksmith
+
+
+## Layout and other configuration
+
+<code>srv/files/</code> will be normal blacksmith [1] directory.
+Configuration is stored in <code>.blacksmith</code>.
+There is a default layout in <code>srv/files/layouts/default.html</code> with some CSS in <code>srv/files/public/css/main.css</code>.
+
+
+[1] <https://github.com/flatiron/blacksmith>
