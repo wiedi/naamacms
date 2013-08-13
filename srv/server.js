@@ -7,9 +7,9 @@ var async = require('async')
 var blacksmith = require('blacksmith/lib/blacksmith')
 
 var config = {
-	'admin_host':  '::',
+	'admin_host':  '127.0.0.1',
 	'admin_port':  3001,
-	'public_host': '::',
+	'public_host': '127.0.0.1',
 	'public_port': 3002,
 	'file_path':   './files/',
 	'debug':       true,
